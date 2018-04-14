@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -21,7 +22,8 @@ public class MyService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         //Started service
-       return null;
+        mediaPlayer.start();
+       return new CustomBinder();
     }
 
     @Override
@@ -44,6 +46,18 @@ public class MyService extends Service {
         mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
     }
 
+    public void play(){
+        if(mediaPlayer != null){
+            mediaPlayer.start();
+        }
+    }
+
+    public void pause(){
+        if(mediaPlayer != null){
+            mediaPlayer.pause();
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mediaPlayer.start();
@@ -54,5 +68,14 @@ public class MyService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mediaPlayer.release();
+    }
+
+
+    public class CustomBinder extends Binder{
+
+        public MyService getService(){
+            return MyService.this;
+        }
+
     }
 }
